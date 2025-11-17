@@ -16,7 +16,7 @@ For å gjøre lokal utvikling krever det at du har Node.js og pnpm installert. H
 Installer: https://nodejs.org/en
 Lukk terminalen din, åpne en ny terminal og cd inn i repository. npm install --global corepack@latest
 Åpne en adminstrator terminal og kjør corepack enable pnpm
-cd Kartverket.Web/map-ui
+cd Gruppe6Oppgave2/map-ui
 pnpm install
 ```
 
@@ -25,7 +25,7 @@ Dette vil installere alle nødvendige avhengigheter for prosjektet.
 For å utvikle kartet lokalt må du først åpne en terminal og ha denne kommandoen kjørende i bakgrunnen:
 
 ```bash
-cd Kartverket.Web/map-ui
+cd Gruppe6Oppgave2/map-ui
 pnpm run dev
 ```
 

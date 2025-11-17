@@ -4,12 +4,12 @@ FROM docker.io/node:24-alpine AS frontend-build
 WORKDIR /src/
 ARG NODE_ENV=production
 
-COPY ["Kartverket.Web/map-ui/package.json", "Kartverket.Web/map-ui/pnpm-lock.yaml", "./"]
+COPY ["Gruppe6Oppgave2/map-ui/package.json", "Gruppe6Oppgave2/map-ui/pnpm-lock.yaml", "./"]
 
 RUN corepack enable && corepack prepare pnpm@10.21 --activate
 RUN pnpm install --frozen-lockfile
 
-COPY ["Kartverket.Web/map-ui/", "./"]
+COPY ["Gruppe6Oppgave2/map-ui/", "./"]
 RUN pnpm run build
 
 # --------------------------------
@@ -23,19 +23,19 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Kartverket.Web/Kartverket.Web.csproj", "Kartverket.Web/"]
-RUN dotnet restore "./Kartverket.Web/Kartverket.Web.csproj"
+COPY ["Gruppe6Oppgave2/Gruppe6Oppgave2.csproj", "Gruppe6Oppgave2/"]
+RUN dotnet restore "./Gruppe6Oppgave2/Gruppe6Oppgave2.csproj"
 COPY . .
 
-COPY --from=frontend-build /wwwroot/ ./Kartverket.Web/wwwroot/
+COPY --from=frontend-build /wwwroot/ ./Gruppe6Oppgave2/wwwroot/
 WORKDIR "/src"
-RUN dotnet build "./Kartverket.Web/" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Gruppe6Oppgave2/" -c $BUILD_CONFIGURATION -o /app/build
 
 # --------------------------------
 # Publisere applikasjonen
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Kartverket.Web" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Gruppe6Oppgave2" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # --------------------------------
 # Kjøre applikasjonen
@@ -44,6 +44,6 @@ WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:8080 DOTNET_RUNNING_IN_CONTAINER=true
 EXPOSE 8080
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Kartverket.Web.dll"]
+ENTRYPOINT ["dotnet", "Gruppe6Oppgave2.dll"]
 
 # --------------------------------
