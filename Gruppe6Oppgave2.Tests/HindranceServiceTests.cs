@@ -2,21 +2,18 @@
 using Gruppe6Oppgave2.Database.Tables;
 using Gruppe6Oppgave2.Models.Map.Request;
 using Gruppe6Oppgave2.Services;
-using Microsoft.Extensions.Logging;
 
 namespace Gruppe6Oppgave2.Tests;
 
 public class HindranceServiceTests
 {
-    private readonly ILogger<HindranceService> _logger;
     private readonly DatabaseContext _dbContext;
     private readonly IHindranceService _hindranceService;
 
     public HindranceServiceTests()
     {
-        _logger = Substitute.For<ILogger<HindranceService>>();
         _dbContext = Create.MockedDbContextFor<DatabaseContext>();
-        _hindranceService = new HindranceService(_logger, _dbContext);
+        _hindranceService = new HindranceService(_dbContext);
     }
 
     [Fact]
