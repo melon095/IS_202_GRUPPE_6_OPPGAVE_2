@@ -17,6 +17,12 @@ En kan få tilgang til applikasjonen via nettleser på `http://localhost:8080`.
 
 # Systemarkitektur
 
+Systemer tar i bruk C# med ASP.NET Core MVC rammeverket for å bygge en webapplikasjon som tillater brukere å registrere seg, logge inn, rapportere hindringer på et kart, og administrere disse rapportene basert på brukerroller.
+
+Applikasjonen bruker Entity Framework Core for å kommunisere med en MariaDB database der all data lagres.
+
+React blir brukt for å bygge et interaktivt kartgrensesnitt der brukere kan plassere og visualisere hindringer.
+
 ## Databaser
 
 [DatabaseContext](https://github.com/melon095/IS_202_GRUPPE_6_OPPGAVE_2/blob/main/Gruppe6Oppgave2/Database/DatabaseContext.cs) klasse som kommuniserer mellom C# og databasen.
