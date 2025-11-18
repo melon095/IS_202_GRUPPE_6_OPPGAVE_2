@@ -12,21 +12,18 @@ namespace Gruppe6Oppgave2.Controllers;
 public class UserController : Controller
 {
     private readonly ILogger<UserController> _logger;
-    private readonly DatabaseContext _dbContext;
     private readonly UserManager<UserTable> _userManager;
     private readonly SignInManager<UserTable> _signInManager;
     private readonly RoleManager<RoleTable> _roleManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public UserController(ILogger<UserController> logger,
-        DatabaseContext dbContext,
         UserManager<UserTable> userManager,
         SignInManager<UserTable> signInManager,
         RoleManager<RoleTable> roleManager,
         IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
-        _dbContext = dbContext;
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
@@ -52,7 +49,7 @@ public class UserController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        _httpContextAccessor.HttpContext.Session.Clear();
+        _httpContextAccessor.HttpContext?.Session.Clear();
 
         return RedirectToAction("Index", "Home");
     }
@@ -74,24 +71,20 @@ public class UserController : Controller
         if (user == null)
         {
             ModelState.AddModelError(string.Empty, "Ugyldig brukernavn eller passord.");
+
             return View(body);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(body.Username, body.Password, body.RememberMe, true);
+        var result = await _signInManager.PasswordSignInAsync(body.Username, body.Password, body.RememberMe, false);
         if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, "Ugyldig brukernavn eller passord.");
+
             return View(body);
         }
 
-        if (result.IsLockedOut)
-        {
-            _logger.LogWarning("Bruker {Username} er låst ute.", body.Username);
-            return View("Lockout");
-        }
-
-        _httpContextAccessor.HttpContext.Session.SetString("Username", body.Username);
-        _httpContextAccessor.HttpContext.Session.SetString("UserId", user.Id.ToString());
+        _httpContextAccessor.HttpContext?.Session.SetString("Username", body.Username);
+        _httpContextAccessor.HttpContext?.Session.SetString("UserId", user.Id.ToString());
 
         _logger.LogInformation("Bruker {Username} logget inn.", body.Username);
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -108,10 +101,18 @@ public class UserController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
+        var role = await _roleManager.FindByNameAsync(RoleValue.User);
+        if (role == null)
+        {
+            ModelState.AddModelError(string.Empty, "Standardrolle ikke funnet.");
+            return View(model);
+        }
+
         var user = new UserTable
         {
             UserName = model.Username,
-            IsActive = true
+            IsActive = true,
+            RoleId = role.Id
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -127,8 +128,8 @@ public class UserController : Controller
 
         _logger.LogInformation("Bruker {Username} opprettet en ny konto.", model.Username);
 
-        _httpContextAccessor.HttpContext.Session.SetString("Username", model.Username);
-        _httpContextAccessor.HttpContext.Session.SetString("UserId", user.Id.ToString());
+        _httpContextAccessor.HttpContext?.Session.SetString("Username", model.Username);
+        _httpContextAccessor.HttpContext?.Session.SetString("UserId", user.Id.ToString());
 
         return RedirectToAction("Index", "Home");
     }
@@ -138,13 +139,19 @@ public class UserController : Controller
     public async Task<IActionResult> SetRole([FromRoute] string role)
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound();
+        if (user == null)
+            return NotFound();
 
-        if (!await _roleManager.RoleExistsAsync(role)) return NotFound();
+        var newRole = await _roleManager.FindByNameAsync(role);
+        if (newRole == null)
+            return NotFound();
 
         var currentRoles = await _userManager.GetRolesAsync(user);
         await _userManager.RemoveFromRolesAsync(user, currentRoles);
         await _userManager.AddToRoleAsync(user, role);
+
+        user.RoleId = newRole.Id;
+        await _userManager.UpdateAsync(user);
 
         await _signInManager.SignInAsync(user, false);
 

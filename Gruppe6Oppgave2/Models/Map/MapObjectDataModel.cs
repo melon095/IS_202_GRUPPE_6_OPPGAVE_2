@@ -1,4 +1,5 @@
-﻿using Gruppe6Oppgave2.Database.Tables;
+﻿using Gruppe6Oppgave2.Database;
+using Gruppe6Oppgave2.Database.Tables;
 
 namespace Gruppe6Oppgave2.Models.Map;
 
@@ -11,11 +12,14 @@ public class MapObjectDataModel
     public string? Title { get; set; }
     public IEnumerable<MapPoint> Points { get; set; } = [];
 
+    public string ReportedByRole { get; set; } = string.Empty;
+    public Guid ReportedByUserId { get; set; }
+    public ReviewStatus ReviewStatus { get; set; }
+
     public class MapPoint
     {
         public double Lat { get; set; }
         public double Lng { get; set; }
-        public double Alt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

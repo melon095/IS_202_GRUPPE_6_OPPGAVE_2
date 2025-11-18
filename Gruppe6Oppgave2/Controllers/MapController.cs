@@ -1,4 +1,5 @@
-﻿using Gruppe6Oppgave2.Database;
+using Gruppe6Oppgave2.AuthPolicy;
+using Gruppe6Oppgave2.Database;
 using Gruppe6Oppgave2.Database.Tables;
 using Gruppe6Oppgave2.Models.Map;
 using Gruppe6Oppgave2.Models.Map.Request;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Gruppe6Oppgave2.Controllers;
 
 [Controller]
+[Authorize]
 public class MapController : Controller
 {
     private readonly ILogger<MapController> _logger;
@@ -36,11 +38,9 @@ public class MapController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     public IActionResult Index() => View();
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> SyncObject(
         [FromBody] PlacedObjectDataModel body,
         [FromQuery] Guid? journeyId = null,
@@ -67,7 +67,6 @@ public class MapController : Controller
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> FinalizeJourney(
         [FromBody] FinalizeJourneyRequest body,
         [FromQuery] Guid? journeyId = null,
@@ -97,15 +96,31 @@ public class MapController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IEnumerable<MapObjectDataModel>> GetObjects(
         [FromQuery] DateTime? since = null,
         [FromQuery] Guid? reportId = null,
-        CancellationToken cancellationToken = default) =>
-        await _hindranceService.GetAllObjectsSince(since, reportId, cancellationToken);
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return [];
+
+        var roles = await _userManager.GetRolesAsync(user);
+        if (roles is null || roles.Count == 0)
+            return [];
+
+        var role = roles.Contains(RoleValue.Kartverket) ? RoleValue.Kartverket
+            : roles.Contains(RoleValue.Pilot) ? RoleValue.Pilot
+            : roles.Contains(RoleValue.User) ? RoleValue.User
+            : null;
+
+        if (role == null)
+            return [];
+
+        return await _hindranceService.GetAllObjectsSince(user, role, reportId, since, cancellationToken);
+    }
 
     [HttpGet("/Map/SatelliteTiles/{z:int}/{x:int}/{y:int}.jpg")]
-    [Authorize]
     public async Task<IActionResult> SatelliteTiles(int x, int y, int z,
         CancellationToken cancellationToken = default)
     {

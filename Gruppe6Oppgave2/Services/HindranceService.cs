@@ -1,4 +1,5 @@
-﻿using Gruppe6Oppgave2.Database;
+using Gruppe6Oppgave2.AuthPolicy;
+using Gruppe6Oppgave2.Database;
 using Gruppe6Oppgave2.Database.Tables;
 using Gruppe6Oppgave2.Models.Map;
 using Gruppe6Oppgave2.Models.Map.Request;
@@ -33,18 +34,20 @@ public interface IHindranceService
 
     void DeleteObject(Guid hindranceObjectId);
 
-    Task<List<MapObjectDataModel>> GetAllObjectsSince(DateTime? since = null, Guid? ignoreReportId = null,
+    Task<List<MapObjectDataModel>> GetAllObjectsSince(
+        UserTable user,
+        string roleName,
+        Guid? ignoreReportId = null,
+        DateTime? since = null,
         CancellationToken cancellationToken = default);
 }
 
 public class HindranceService : IHindranceService
 {
-    private readonly ILogger<HindranceService> _logger;
     private readonly DatabaseContext _dbContext;
 
-    public HindranceService(ILogger<HindranceService> logger, DatabaseContext dbContext)
+    public HindranceService(DatabaseContext dbContext)
     {
-        _logger = logger;
         _dbContext = dbContext;
     }
 
@@ -103,10 +106,8 @@ public class HindranceService : IHindranceService
             HindranceObjectId = hindranceObjectId,
             Latitude = p.Lat,
             Longitude = p.Lng,
-            Elevation = p.Elevation,
             Label = p.Label,
             CreatedAt = p.CreatedAt,
-            // TODO: Order må komme som brukerinput!
             Order = idx
         }).ToList();
 
@@ -125,22 +126,65 @@ public class HindranceService : IHindranceService
         _dbContext.HindranceObjects.Remove(obj);
     }
 
-    public Task<List<MapObjectDataModel>> GetAllObjectsSince(DateTime? since = null, Guid? ignoreReportId = null,
+    public Task<List<MapObjectDataModel>> GetAllObjectsSince(
+        UserTable user,
+        string roleName,
+        Guid? ignoreReportId = null,
+        DateTime? since = null,
         CancellationToken cancellationToken = default)
     {
+        // Bygg opp spørringen
         var query = _dbContext.HindranceObjects
             .AsNoTracking()
             .Include(o => o.HindranceType)
             .Include(o => o.HindrancePoints)
+            .Include(o => o.Report)
+            .ThenInclude(r => r.ReportedBy)
+            .ThenInclude(u => u.Role)
             .AsQueryable();
 
-        if (since != null)
-            query = query.Where(o => o.CreatedAt >= since || o.UpdatedAt >= since);
+        // Filtrer på siden av dato hvis angitt
+        if (since.HasValue)
+            query = query.Where(o => o.CreatedAt >= since.Value || o.UpdatedAt >= since.Value);
 
-        if (ignoreReportId != Guid.Empty)
-            query = query.Where(o => o.ReportId != ignoreReportId);
+        // Filtrer bort et spesifikt rapport-id hvis angitt
+        if (ignoreReportId.HasValue && ignoreReportId.Value != Guid.Empty)
+            query = query.Where(o => o.ReportId != ignoreReportId.Value);
 
+        query = roleName switch
+        {
+            // Dersom bruker er pilot
+            _ when roleName.Equals(RoleValue.Pilot, StringComparison.OrdinalIgnoreCase) =>
+                query.Where(o =>
+                    // Eget rapporterte objekter
+                    o.Report.ReportedById == user.Id ||
+                    // Dersom objektet er rapportert av en annen bruker enn piloten
+                    (o.Report.ReportedBy.Role != null && o.Report.ReportedBy.Role.Name != RoleValue.User &&
+                     o.ReviewStatus != ReviewStatus.Closed) ||
+                    // Dersom objektet er rapportert av en bruker og er løst
+                    (o.Report.ReportedBy.Role != null && o.Report.ReportedBy.Role.Name == RoleValue.User &&
+                     o.ReviewStatus == ReviewStatus.Resolved)),
+
+            // Dersom bruker er vanlig bruker
+            _ when roleName.Equals(RoleValue.User, StringComparison.OrdinalIgnoreCase) =>
+                query.Where(o =>
+                    // Eget rapporterte objekter
+                    o.Report.ReportedById == user.Id ||
+                    // Dersom objektet er rapportert av en annen bruker og er løst
+                    o.ReviewStatus == ReviewStatus.Resolved),
+
+            // Dersom bruker er Kartverket
+            _ when roleName.Equals(RoleValue.Kartverket, StringComparison.OrdinalIgnoreCase) =>
+                // Få alle objekter
+                query,
+
+            // Annet (ukjent rolle)
+            _ => query.Where(o => false)
+        };
+
+        // Prosesser og returner resultatet
         return query
+            // Sorter på opprettet og oppdatert dato
             .OrderBy(o => o.CreatedAt)
             .ThenBy(o => o.UpdatedAt)
             .Select(o => new MapObjectDataModel
@@ -156,7 +200,6 @@ public class HindranceService : IHindranceService
                     {
                         Lat = mp.Latitude,
                         Lng = mp.Longitude,
-                        Alt = mp.Elevation,
                         CreatedAt = mp.CreatedAt
                     })
                     .ToList()

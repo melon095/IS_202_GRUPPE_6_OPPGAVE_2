@@ -1,25 +1,22 @@
 using Gruppe6Oppgave2.Database;
 using Gruppe6Oppgave2.Database.Tables;
 using Gruppe6Oppgave2.Services;
-using Microsoft.Extensions.Logging;
 
 namespace Gruppe6Oppgave2.Tests;
 
 public class ReportServiceTests
 {
-    private readonly ILogger<ReportService> _logger;
     private readonly DatabaseContext _dbContext;
 
     public ReportServiceTests()
     {
-        _logger = Substitute.For<ILogger<ReportService>>();
         _dbContext = Create.MockedDbContextFor<DatabaseContext>();
     }
 
     [Fact]
     public async Task CreateDraft_ValidReport_Succeeds()
     {
-        var service = new ReportService(_logger, _dbContext);
+        var service = new ReportService(_dbContext);
         var reportedById = Guid.NewGuid();
 
         var report = await service.CreateDraft(reportedById);
@@ -32,7 +29,7 @@ public class ReportServiceTests
     [Fact]
     public void FinaliseReport_ValidReport_Succeeds()
     {
-        var service = new ReportService(_logger, _dbContext);
+        var service = new ReportService(_dbContext);
         var report = new ReportTable
         {
             Id = Guid.NewGuid(),
