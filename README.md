@@ -141,6 +141,6 @@ corepack enable pnpm
 4. Gå til prosjektet og installer avhengighetene:
 
 ```bash
-cd Kartverket.Web/map-ui
+cd Gruppe6Oppgave2/map-ui
 pnpm install
 ```
