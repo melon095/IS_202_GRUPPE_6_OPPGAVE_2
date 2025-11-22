@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gruppe6Oppgave2.Models.Report;
 
+// Modell for detaljvisning av en rapport
 public class ReportDetailsViewModel
 {
-    [FromRoute] public Guid ReportId { get; set; }
-    [FromRoute] public Guid? ObjectId { get; set; }
+    [FromRoute] public Guid ReportId { get; set; } // Id for rapporten
+    [FromRoute] public Guid? ObjectId { get; set; } // Valgfri Id for et spesifikt objekt i rapporten
 
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -17,6 +18,7 @@ public class ReportDetailsViewModel
 
     public List<ObjectDataModel> Objects { get; set; } = [];
 
+    // Data modell for et enkelt objekt i rapporten
     public class ObjectDataModel : IMapObject
     {
         public Guid Id { get; set; }

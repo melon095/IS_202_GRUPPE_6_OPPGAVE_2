@@ -4,6 +4,7 @@ using Gruppe6Oppgave2.Database;
 
 namespace Gruppe6Oppgave2.Models.Report.Response;
 
+// Modell for objektgjennomgang i rapporter
 public class ReportReviewModel
 {
     public Guid Id { get; set; }
@@ -16,7 +17,7 @@ public class ReportReviewModel
 
     public List<ObjectDataModel> Objects { get; set; } = [];
 
-
+    // Data modell for et enkelt objekt i rapporten
     public class ObjectDataModel
     {
         public Guid Id { get; set; }
@@ -28,6 +29,7 @@ public class ReportReviewModel
 
     }
 
+    // Data modell for tilbakemeldinger på objekter
     public class FeedBackModel
     {
         public ReviewStatus ReviewStatus { get; set; }

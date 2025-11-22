@@ -4,16 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gruppe6Oppgave2.Models.Report.Response;
 
+// Handlinger for objektgjennomgang
 public enum ObjectReviewAction
 {
     Accept,
     Deny
 }
 
+// Modell for objektgjennomgang i rapporter
 public class ReportObjectViewModel
 {
-    [FromRoute] public Guid ReportId { get; set; }
-    [FromRoute] public Guid ObjectId { get; set; }
+    [FromRoute] public Guid ReportId { get; set; } // Id for rapporten som inneholder objektet
+    [FromRoute] public Guid ObjectId { get; set; } // Id for objektet som skal gjennomgås
 
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -27,8 +29,10 @@ public class ReportObjectViewModel
 
     public List<ObjectDataModel> Objects { get; set; } = [];
 
+    // Data modell for et enkelt objekt i rapporten
     public class ObjectDataModel : IMapObject
     {
+
         public Guid Id { get; set; }
         public Guid TypeId { get; set; }
         public Point? CentroidPoint { get; set; }
@@ -44,6 +48,7 @@ public class ReportObjectViewModel
         public GeometryType GeometryType { get; set; }
     }
 
+    // Data modell for tilbakemeldinger på objekter
     public class FeedbackModel
     {
         public Guid Id { get; set; }

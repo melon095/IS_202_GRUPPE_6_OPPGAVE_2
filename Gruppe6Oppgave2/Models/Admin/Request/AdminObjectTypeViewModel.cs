@@ -6,7 +6,7 @@ public class AdminObjectTypeViewModel
     {
         
     }
-    
+    // Unik identifikator for objektet
     public Guid Id { get; set; }
     public string Name { get; set; }
 }

@@ -1,5 +1,6 @@
 namespace Gruppe6Oppgave2.Models.Map.Request;
 
+// Data modell for et plassert punkt på kartet
 public class PlacedPointDataModel
 {
     public double Lat { get; set; }

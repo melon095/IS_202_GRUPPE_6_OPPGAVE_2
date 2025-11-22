@@ -13,8 +13,9 @@ namespace Gruppe6Oppgave2.Models.Admin
         public ReviewStatus? SortStatus { get; set; }
         // List of reports
         public List<MakeReportList> Reports { get; set; } = [];
-        public class MakeReportList
+        public class MakeReportList 
         {
+            //Innhold som skal være med i rapport listen
             public Guid Id { get; set; }
             public string User { get; set; }
             public string Title { get; set; }

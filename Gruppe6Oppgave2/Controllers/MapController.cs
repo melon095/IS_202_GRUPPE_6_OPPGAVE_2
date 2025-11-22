@@ -14,14 +14,15 @@ namespace Gruppe6Oppgave2.Controllers;
 [Authorize]
 public class MapController : Controller
 {
-    private readonly ILogger<MapController> _logger;
-    private readonly IHindranceService _hindranceService;
-    private readonly IJourneyOrchestrator _journeyOrchestrator;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<UserTable> _userManager;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<MapController> _logger; // Logger for logging informasjon og feil
+    private readonly IHindranceService _hindranceService; // Service for håndtering av hindringer
+    private readonly IJourneyOrchestrator _journeyOrchestrator; // Orkestrator for reisehåndtering
+    private readonly IUnitOfWork _unitOfWork; // Enhet for håndtering av databaseoperasjoner
+    private readonly UserManager<UserTable> _userManager; // UserManager for håndtering av brukere
+    private readonly IHttpClientFactory _httpClientFactory; // Factory for å opprette HttpClient-instans
 
     public MapController(
+        // Avhengighetsinjeksjon av nødvendige tjenester
         ILogger<MapController> logger,
         IHindranceService hindranceService,
         IJourneyOrchestrator journeyOrchestrator,
@@ -29,6 +30,7 @@ public class MapController : Controller
         UserManager<UserTable> userManager,
         IHttpClientFactory httpClientFactory)
     {
+        // Initialisering av felt med injiserte tjenester
         _logger = logger;
         _hindranceService = hindranceService;
         _journeyOrchestrator = journeyOrchestrator;
@@ -38,31 +40,32 @@ public class MapController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index() => View();
+    public IActionResult Index() => View(); // Returnerer standardvisningen for kartet
 
     [HttpPost]
-    public async Task<IActionResult> SyncObject(
-        [FromBody] PlacedObjectDataModel body,
-        [FromQuery] Guid? journeyId = null,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SyncObject( // Synkroniserer et objekt i en reise
+        [FromBody] PlacedObjectDataModel body, // DataModel som inneholder informasjon om objektet
+        [FromQuery] Guid? journeyId = null, // Valgfritt reise-ID
+        CancellationToken cancellationToken = default) // Avbestillings-token for asynkrone operasjoner
     {
+        // Validerer modelltilstanden
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return Unauthorized();
+        var user = await _userManager.GetUserAsync(User); // Henter den nåværende brukeren
+        if (user == null) return Unauthorized(); // Returnerer 401 hvis brukeren ikke er autentisert
 
-        try
+        try // Prøver å synkronisere objektet
         {
-            var (resultJourneyId, resultObjectId) = await _unitOfWork.ExecuteInTransactionAsync(
-                () => _journeyOrchestrator.SyncObject(user.Id, journeyId, body, cancellationToken),
-                cancellationToken);
+            var (resultJourneyId, resultObjectId) = await _unitOfWork.ExecuteInTransactionAsync( // Utfører operasjonen i en database-transaksjon
+                () => _journeyOrchestrator.SyncObject(user.Id, journeyId, body, cancellationToken), 
+                cancellationToken); // Kaller orkestratoren for å synkronisere objektet
 
-            return Ok(new { JourneyId = resultJourneyId, ObjectId = resultObjectId });
+            return Ok(new { JourneyId = resultJourneyId, ObjectId = resultObjectId }); // Returnerer resultatet som JSON
         }
-        catch (Exception ex)
+        catch (Exception ex) // Fanger opp eventuelle unntak som oppstår under synkroniseringen
         {
-            _logger.LogError(ex, "Error syncing object for user {UserId}", user.Id);
-            return StatusCode(500, ex.Message);
+            _logger.LogError(ex, "Error syncing object for user {UserId}", user.Id); // Logger feilen
+            return StatusCode(500, ex.Message); // Returnerer 500 med feilmeldingen
         }
     }
 
@@ -72,26 +75,26 @@ public class MapController : Controller
         [FromQuery] Guid? journeyId = null,
         CancellationToken cancellationToken = default)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (journeyId is null) return BadRequest("JourneyId is required");
+        if (!ModelState.IsValid) return BadRequest(ModelState); // Validerer modelltilstanden
+        if (journeyId is null) return BadRequest("JourneyId is required"); // Sjekker om reise-ID er gitt
 
-        try
+        try // Prøver å fullføre reisen
         {
-            var resultId = await _unitOfWork.ExecuteInTransactionAsync(
+            var resultId = await _unitOfWork.ExecuteInTransactionAsync( // Utfører operasjonen i en database-transaksjon
                 () => _journeyOrchestrator.Finalise(journeyId.Value, body, cancellationToken),
-                cancellationToken);
+                cancellationToken); // Kaller orkestratoren for å fullføre reisen
 
-            return Ok(new { JourneyId = resultId });
+            return Ok(new { JourneyId = resultId }); // Returnerer resultatet som JSON
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) // Fanger opp spesifikke unntak for ugyldige operasjoner
         {
-            _logger.LogWarning(ex, "Journey finalization failed for {JourneyId}", journeyId);
-            return BadRequest(ex.Message);
+            _logger.LogWarning(ex, "Journey finalization failed for {JourneyId}", journeyId); // Logger en advarsel
+            return BadRequest(ex.Message); // Returnerer 400 med feilmeldingen
         }
-        catch (Exception ex)
+        catch (Exception ex) // Fanger opp andre unntak
         {
-            _logger.LogError(ex, "Error finalizing journey {JourneyId}", journeyId);
-            return StatusCode(500, ex.Message);
+            _logger.LogError(ex, "Error finalizing journey {JourneyId}", journeyId); // Logger feilen
+            return StatusCode(500, ex.Message); // Returnerer 500 med feilmeldingen
         }
     }
 
@@ -101,55 +104,56 @@ public class MapController : Controller
         [FromQuery] Guid? reportId = null,
         CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await _userManager.GetUserAsync(User); // Henter den nåværende brukeren
         if (user == null)
-            return [];
+            return []; // Returnerer tom liste hvis brukeren ikke er autentisert
 
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await _userManager.GetRolesAsync(user); // Henter brukerens roller
         if (roles is null || roles.Count == 0)
-            return [];
+            return []; // Returnerer tom liste hvis brukeren ikke har noen roller
 
-        var role = roles.Contains(RoleValue.Kartverket) ? RoleValue.Kartverket
-            : roles.Contains(RoleValue.Pilot) ? RoleValue.Pilot
-            : roles.Contains(RoleValue.User) ? RoleValue.User
-            : null;
+        var role = roles.Contains(RoleValue.Kartverket) ? RoleValue.Kartverket // Prioriterer Kartverket-rollen
+            : roles.Contains(RoleValue.Pilot) ? RoleValue.Pilot // Prioriterer Pilot-rollen
+            : roles.Contains(RoleValue.User) ? RoleValue.User // Prioriterer User-rollen
+            : null; // Setter rollen til null hvis ingen kjente roller finnes
 
         if (role == null)
-            return [];
+            return []; // Returnerer tom liste hvis ingen gyldig rolle er funnet
 
+        // Henter alle objekter siden angitt dato
         return await _hindranceService.GetAllObjectsSince(user, role, reportId, since, cancellationToken);
     }
 
-    [HttpGet("/Map/SatelliteTiles/{z:int}/{x:int}/{y:int}.jpg")]
+    [HttpGet("/Map/SatelliteTiles/{z:int}/{x:int}/{y:int}.jpg")] // Henter satellittfliser for kartvisning
     public async Task<IActionResult> SatelliteTiles(int x, int y, int z,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) // Henter satellittfliser for kartvisning
     {
-        try
+        try // Prøver å hente satellittflisen
         {
-            using var client = _httpClientFactory.CreateClient("StadiaTiles");
+            using var client = _httpClientFactory.CreateClient("StadiaTiles"); // Oppretter en HttpClient for å hente fliser
 
             var response = await client.GetAsync($"/tiles/alidade_satellite/{z}/{x}/{y}.jpg", cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode) // Sjekker om forespørselen var vellykket
             {
-                var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                var responseBody = await response.Content.ReadAsStringAsync(cancellationToken); // Leser responsinnholdet
                 _logger.LogWarning("Failed to fetch satellite tile {Z}/{X}/{Y}: {StatusCode} {ResponseBody}",
-                    z, x, y, response.StatusCode, responseBody);
+                    z, x, y, response.StatusCode, responseBody); // Logger en advarsel hvis flisen ikke kunne hentes
 
-                return NotFound();
+                return NotFound(); // Returnerer 404 hvis flisen ikke finnes
             }
 
-            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken); // Leser innholdet som en strøm
 
-            HttpContext.Response.Headers.ETag = response.Headers.ETag?.Tag ?? null;
-            HttpContext.Response.Headers.LastModified = response.Content.Headers.LastModified?.ToString() ?? null;
+            HttpContext.Response.Headers.ETag = response.Headers.ETag?.Tag ?? null; // Setter ETag-headeren i responsen
+            HttpContext.Response.Headers.LastModified = response.Content.Headers.LastModified?.ToString() ?? null; // Setter Last-Modified-headeren i responsen
             HttpContext.Response.Headers.CacheControl =
-                response.Headers.CacheControl?.ToString() ?? "public,max-age=3600";
+                response.Headers.CacheControl?.ToString() ?? "public,max-age=3600"; // Setter Cache-Control-headeren i responsen
 
-            return File(stream, "image/jpeg");
+            return File(stream, "image/jpeg"); // Returnerer flisen som en JPEG-bildestrøm
         }
         catch
         {
-            return NotFound();
+            return NotFound(); // Returnerer 404 hvis det oppstår en feil
         }
     }
 }

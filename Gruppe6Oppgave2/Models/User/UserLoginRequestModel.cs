@@ -2,6 +2,7 @@
 
 namespace Gruppe6Oppgave2.Models.User;
 
+// Data modell for brukerinnloggingsforespørsel
 public class UserLoginRequestModel
 {
     [Required(ErrorMessage = "Brukernavn er påkrevd")]

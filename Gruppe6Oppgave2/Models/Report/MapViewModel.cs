@@ -3,15 +3,17 @@ using Gruppe6Oppgave2.Models.Report.Response;
 
 namespace Gruppe6Oppgave2.Models.Report;
 
+// Modell for visning av kart med objekter
 public class MapViewModel
 {
-    public IEnumerable<IMapObject> MapObjects { get; set; } = [];
+    public IEnumerable<IMapObject> MapObjects { get; set; } = []; // Liste over kartobjekter
 
-    public IMapObject? SelectedMapObject { get; set; }
+    public IMapObject? SelectedMapObject { get; set; } // Valgt kartobjekt
 
-    public string MapElementId { get; set; } = "map";
+    public string MapElementId { get; set; } = "map"; // Id for HTML-elementet som inneholder kartet
 }
 
+// Grensesnitt for kartobjekter
 public interface IMapObject
 {
     Guid Id { get; set; }

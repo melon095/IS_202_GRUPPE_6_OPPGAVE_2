@@ -3,12 +3,14 @@ using Gruppe6Oppgave2.Database.Tables;
 
 namespace Gruppe6Oppgave2.Models.Report.Response;
 
-public enum ObjectReviewActionOld
+// Modell for objektgjennomgang i rapporter
+public enum ObjectReviewActionOld 
 {
     Accept,
     Deny
 }
 
+// Modell for objektgjennomgang i rapporter
 public class ObjectReviewModel
 {
     public Guid Id { get; set; }
@@ -23,7 +25,7 @@ public class ObjectReviewModel
 
     public List<ObjectDataModel> Objects { get; set; } = [];
 
-
+    // Data modell for et enkelt objekt i rapporten
     public class ObjectDataModel
     {
         public Guid Id { get; set; }
@@ -32,12 +34,13 @@ public class ObjectReviewModel
         public string Description { get; set; }
         public ReviewStatus ObjectStatus { get; set; }
         public List<Point> Points { get; set; } = [];
-        public List<FeedBackModel> Feedbacks { get; set; } = [];
+        public List<FeedBackModel> Feedbacks { get; set; } = []; // Liste over tilbakemeldinger for objektet
 
         public DateTime? VerifiedAt { get; set; }
         public bool IsVerified => VerifiedAt.HasValue;
     }
 
+    // Data modell for tilbakemeldinger på objekter
     public class FeedBackModel
     {
         public Guid Id { get; set; }
