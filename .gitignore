@@ -367,9 +367,9 @@ FodyWeavers.xsd
 
 .idea/
 
-Kartverket.Web/wwwroot/map-ui/
-Kartverket.Web/map-ui/node_modules/
-Kartverket.Web/map-ui/.vite/
+Gruppe6Oppgave2/wwwroot/map-ui/
+Gruppe6Oppgave2/map-ui/node_modules/
+Gruppe6Oppgave2/map-ui/.vite/
 
 !appsettings.json
 appsettings.*.json

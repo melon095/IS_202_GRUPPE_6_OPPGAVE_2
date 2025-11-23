@@ -5,7 +5,7 @@ services:
     environment:
       - Logging__LogLevel__Microsoft.AspNetCore.DataProtection=Error
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=gruppe6_db;User=root;Password=passord;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=gruppe6_2_db;User=root;Password=passord;
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -19,7 +19,7 @@ services:
       - MARIADB_DATABASE=gruppe6_kartverket
       - MARIADB_ROOT_PASSWORD=passord
     volumes:
-      - gruppe_6_kartverket_db_data:/var/lib/mysql
+      - gruppe_6_2_kartverket_db_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mariadb --user=root --password=passord --host=127.0.0.1 --protocol=tcp -e 'SELECT 1' || exit 1"]
       interval: 5s
@@ -28,4 +28,4 @@ services:
       start_period: 20s
 
 volumes:
-  gruppe_6_kartverket_db_data:
+  gruppe_6_2_kartverket_db_data:

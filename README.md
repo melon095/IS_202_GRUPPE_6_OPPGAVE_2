@@ -11,7 +11,7 @@ docker compose up
 # Drift
 
 Applikasjonen kan enten startes manuelt via Visual Studio, Rider, eller med docker ved bruk av kommando `docker compose up` i terminalen.
-Den kobler seg til en MariaDB Database der tabeller blir skapt automatisk fra https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/DatabaseContext.cs
+Den kobler seg til en MariaDB Database der tabeller blir skapt automatisk fra https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/DatabaseContext.cs
 
 En kan få tilgang til applikasjonen via nettleser på `http://localhost:8080`.
 
@@ -25,67 +25,67 @@ React blir brukt for å bygge et interaktivt kartgrensesnitt der brukere kan pla
 
 ## Databaser
 
-[DatabaseContext](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/DatabaseContext.cs) klasse som kommuniserer mellom C# og databasen.
+[DatabaseContext](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/DatabaseContext.cs) klasse som kommuniserer mellom C# og databasen.
 
 ## Modeller
 
-[HindranceObjectTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/HindranceObjectTable.cs) representerer tabellen i databasen som lagrer informasjon om hindringer.
+[HindranceObjectTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/HindranceObjectTable.cs) representerer tabellen i databasen som lagrer informasjon om hindringer.
 
-[HindrancePointTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/HindrancePointTable.cs) representerer tabellen i databasen som lagrer geografiske punkter for hindringer.
+[HindrancePointTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/HindrancePointTable.cs) representerer tabellen i databasen som lagrer geografiske punkter for hindringer.
 
-[HindranceTypeTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/HindranceTypeTable.cs) representerer tabellen i databasen som lagrer hva slags type en hindring er.
+[HindranceTypeTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/HindranceTypeTable.cs) representerer tabellen i databasen som lagrer hva slags type en hindring er.
 
-[ReportFeedbackTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/ReportFeedbackTable.cs) representerer tabellen i databasen som lagrer tilbakemeldinger på rapporterte hindringer.
+[ReportFeedbackTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/ReportFeedbackTable.cs) representerer tabellen i databasen som lagrer tilbakemeldinger på rapporterte hindringer.
 
-[ReportTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/ReportTable.cs) representerer tabellen i databasen som lagrer en samling av hindringer.
+[ReportTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/ReportTable.cs) representerer tabellen i databasen som lagrer en samling av hindringer.
 
-[RoleTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/RoleTable.cs) representerer tabellen i databasen som lagrer brukerroller.
+[RoleTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/RoleTable.cs) representerer tabellen i databasen som lagrer brukerroller.
 
-[UserTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Database/Tables/UserTable.cs) representerer tabellen i databasen som lagrer brukerinformasjon.
+[UserTable](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Database/Tables/UserTable.cs) representerer tabellen i databasen som lagrer brukerinformasjon.
 
 ## Kontrollere
 
-[AdminController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/AdminController.cs) håndterer administrasjon spesifikke funksjoner for registrerte hindringer.
+[AdminController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/AdminController.cs) håndterer administrasjon spesifikke funksjoner for registrerte hindringer.
 
-[HomeController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/HomeController.cs) håndterer startsiden.
+[HomeController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/HomeController.cs) håndterer startsiden.
 
-[MapController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/MapController.cs) håndterer kartvisning.
+[MapController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/MapController.cs) håndterer kartvisning.
 
-[ObjectTypesController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/ObjectTypesController.cs) håndterer typer til hindringer.
+[ObjectTypesController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/ObjectTypesController.cs) håndterer typer til hindringer.
 
-[ReportController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/ReportController.cs) håndterer tilbakemeldinger av hindringer.
+[ReportController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/ReportController.cs) håndterer tilbakemeldinger av hindringer.
 
-[UserController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Controllers/UserController.cs) handterer brukerrelaterte funksjoner som registrering og pålogging.
+[UserController](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Controllers/UserController.cs) handterer brukerrelaterte funksjoner som registrering og pålogging.
 
 ## Views
 
 ### User
 
-[Login](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/User/Login.cshtml) - Side for brukerpålogging.
+[Login](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/User/Login.cshtml) - Side for brukerpålogging.
 
-[Register](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/User/Register.cshtml) - Side for brukerregistrering.
+[Register](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/User/Register.cshtml) - Side for brukerregistrering.
 
-[AccessDenied](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/User/AccessDenied.cshtml) - Side som vises når en bruker prøver å få tilgang til en side de ikke har tillatelse til.
+[AccessDenied](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/User/AccessDenied.cshtml) - Side som vises når en bruker prøver å få tilgang til en side de ikke har tillatelse til.
 
 ### Report
 
-[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Report/Index.cshtml) - Side for å se alle rapporterte hindringer.
+[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Report/Index.cshtml) - Side for å se alle rapporterte hindringer.
 
-[Details](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Report/Details.cshtml) - Side for å se detaljer om en rapport.
+[Details](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Report/Details.cshtml) - Side for å se detaljer om en rapport.
 
-[Object](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Report/Object.cshtml) - Side for å se detaljer om en spesifikk hindring.
+[Object](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Report/Object.cshtml) - Side for å se detaljer om en spesifikk hindring.
 
-[_Map{Container,Scripts,Styles}Partial](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/tree/main/Kartverket.Web/Views/Report) - Delvise visninger for å integrere kart i rapportvisningene.
+[_Map{Container,Scripts,Styles}Partial](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/tree/main/Gruppe6Oppgave2/Views/Report) - Delvise visninger for å integrere kart i rapportvisningene.
 
-[ErrorView](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Report/ErrorView.cshtml) - Side som vises ved feil.
+[ErrorView](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Report/ErrorView.cshtml) - Side som vises ved feil.
 
 ### Map
 
-[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Map/Index.cshtml) - Side for å vise kart for å registrere hindringer.
+[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Map/Index.cshtml) - Side for å vise kart for å registrere hindringer.
 
 ### Home
 
-[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Kartverket.Web/Views/Home/Index.cshtml) - Startsiden for applikasjonen.
+[Index](https://github.com/melon095/IS_202_GRUPPE_6_PROSJEKT/blob/main/Gruppe6Oppgave2/Views/Home/Index.cshtml) - Startsiden for applikasjonen.
 
 # Database
 
@@ -141,6 +141,6 @@ corepack enable pnpm
 4. Gå til prosjektet og installer avhengighetene:
 
 ```bash
-cd Kartverket.Web/map-ui
+cd Gruppe6Oppgave2/map-ui
 pnpm install
 ```
